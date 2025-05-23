@@ -55,6 +55,17 @@ const Index = () => {
     setSearchData({ ...searchData, ...newData });
   };
 
+  // Function to explicitly start the search and move to results
+  const handleSearchOpportunities = () => {
+    setSearchInitiated(true);
+    setCurrentStep(4); // Move directly to the results step
+    toast({
+      title: "Ricerca avviata!",
+      description: `Ricerca per ${searchData.businessSubtype} con budget fino a €${searchData.budget.max}`,
+      duration: 3000
+    });
+  };
+
   if (currentStep === 0) {
     return <Hero onGetStarted={() => setCurrentStep(1)} />;
   }
@@ -126,7 +137,7 @@ const Index = () => {
               </Button>
               {currentStep === 3 && (
                 <Button 
-                  onClick={handleNext}
+                  onClick={handleSearchOpportunities}
                   className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
                 >
                   Cerca Opportunità
