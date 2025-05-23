@@ -9,8 +9,10 @@ import ResultsGrid from "@/components/ResultsGrid";
 import Hero from "@/components/Hero";
 import { Building2, MapPin, TrendingUp, Users } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [searchData, setSearchData] = useState({
     businessType: '',
@@ -66,6 +68,11 @@ const Index = () => {
     });
   };
 
+  // Function to return to home
+  const goToHome = () => {
+    setCurrentStep(0);
+  };
+
   if (currentStep === 0) {
     return <Hero onGetStarted={() => setCurrentStep(1)} />;
   }
@@ -78,7 +85,11 @@ const Index = () => {
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div 
+              className="flex items-center space-x-2 cursor-pointer" 
+              onClick={goToHome}
+              title="Torna alla home"
+            >
               <Building2 className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 BusinessFinder AI

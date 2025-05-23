@@ -14,8 +14,19 @@ import {
   Star,
   Eye,
   Heart,
-  ExternalLink
+  ExternalLink,
+  X
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface ResultsGridProps {
   searchData: any;
@@ -46,7 +57,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Vetrina su strada", "Aria condizionata", "Bagno", "Deposito"],
       competition: 3,
       footTraffic: 85,
-      accessibility: 90
+      accessibility: 90,
+      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "Immobiliare.it"
     },
     {
       id: 2,
@@ -66,7 +79,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Doppia vetrina", "Parcheggio", "Climatizzato", "Fiber internet"],
       competition: 5,
       footTraffic: 78,
-      accessibility: 95
+      accessibility: 95,
+      image: "https://images.unsplash.com/photo-1622127922040-13cab637ee78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "Idealista.it"
     },
     {
       id: 3,
@@ -86,7 +101,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Atmosfera unica", "Dehors possibile", "Zona pedonale"],
       competition: 8,
       footTraffic: 92,
-      accessibility: 75
+      accessibility: 75,
+      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+      source: "Casa.it"
     },
     {
       id: 4,
@@ -106,7 +123,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Design moderno", "Sicurezza H24", "Parcheggio riservato"],
       competition: 2,
       footTraffic: 88,
-      accessibility: 98
+      accessibility: 98,
+      image: "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "Subito.it"
     },
     {
       id: 5,
@@ -126,7 +145,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Vetrina prestigiosa", "Contesto esclusivo", "Alta visibilità"],
       competition: 4,
       footTraffic: 75,
-      accessibility: 85
+      accessibility: 85,
+      image: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "Immobiliare.it"
     },
     {
       id: 6,
@@ -146,7 +167,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Ampia sala d'attesa", "Reception", "3 stanze separate", "Accessibile"],
       competition: 2,
       footTraffic: 65,
-      accessibility: 90
+      accessibility: 90,
+      image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1168&q=80",
+      source: "Case&Uffici"
     },
     {
       id: 7,
@@ -166,7 +189,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Ampio cortile", "Zona carico/scarico", "Uffici interni", "Parcheggi"],
       competition: 1,
       footTraffic: 45,
-      accessibility: 80
+      accessibility: 80,
+      image: "https://images.unsplash.com/photo-1581578017093-cd30fce4eeb7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "Capannoni.it"
     },
     {
       id: 8,
@@ -186,7 +211,9 @@ const generateMockResults = (searchData: any) => {
       features: ["Grande visibilità", "Spazi personalizzabili", "Area food court vicina"],
       competition: 6,
       footTraffic: 95,
-      accessibility: 100
+      accessibility: 100,
+      image: "https://images.unsplash.com/photo-1580654843061-8c90a9585faf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+      source: "MallSpaces.it"
     }
   ];
 
@@ -215,6 +242,7 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [selectedResult, setSelectedResult] = useState<any>(null);
 
   useEffect(() => {
     // Simulate API call
@@ -234,6 +262,10 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
         ? prev.filter(fav => fav !== id)
         : [...prev, id]
     );
+  };
+
+  const viewDetails = (result: any) => {
+    setSelectedResult(result);
   };
 
   const getScoreColor = (score: number) => {
@@ -300,9 +332,17 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
           <Card key={result.id} className="bg-white/80 backdrop-blur-md hover:shadow-xl transition-all duration-300">
             <CardContent className="p-0">
               <div className="flex flex-col lg:flex-row">
-                {/* Image Placeholder */}
-                <div className="lg:w-80 h-48 lg:h-auto bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <Building2 className="h-16 w-16 text-blue-400" />
+                {/* Image */}
+                <div className="lg:w-80 h-48 lg:h-auto overflow-hidden">
+                  <img 
+                    src={result.image} 
+                    alt={result.title} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.unsplash.com/photo-1564419320461-6870880221ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80";
+                    }}
+                  />
                 </div>
 
                 {/* Content */}
@@ -317,6 +357,10 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
                       </div>
                       {/* Display the subtype */}
                       <Badge className="mt-2">{result.subtype}</Badge>
+                      {/* Display the source */}
+                      <Badge variant="outline" className="mt-2 ml-2 text-xs bg-blue-50">
+                        <span className="opacity-70 mr-1">Fonte:</span> {result.source}
+                      </Badge>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge className={`${getScoreBadgeColor(result.score)}`}>
@@ -400,10 +444,103 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
 
                   {/* Actions */}
                   <div className="flex space-x-2 pt-2">
-                    <Button size="sm" className="flex-1">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Vedi Dettagli
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" className="flex-1" onClick={() => viewDetails(result)}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          Vedi Dettagli
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="flex justify-between items-center">
+                            {result.title}
+                            <DialogClose>
+                              <Button variant="ghost" size="sm">
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </DialogClose>
+                          </DialogTitle>
+                          <DialogDescription className="flex items-center text-slate-600">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {result.address}
+                            <Badge className="ml-2">{result.type}</Badge>
+                            <Badge variant="outline" className="ml-2">
+                              Fonte: {result.source}
+                            </Badge>
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                          <div>
+                            <img 
+                              src={result.image} 
+                              alt={result.title}
+                              className="w-full h-64 object-cover rounded-lg mb-4"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "https://images.unsplash.com/photo-1564419320461-6870880221ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80";
+                              }}
+                            />
+                            <div className="bg-slate-50 p-4 rounded-lg">
+                              <h4 className="text-lg font-medium mb-2">Descrizione</h4>
+                              <p className="text-slate-600">{result.description}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="bg-blue-50 p-4 rounded-lg text-center">
+                                <span className="text-slate-600 text-sm">Prezzo Mensile</span>
+                                <div className="text-xl font-bold text-blue-700">€{result.price}</div>
+                              </div>
+                              <div className="bg-green-50 p-4 rounded-lg text-center">
+                                <span className="text-slate-600 text-sm">Superficie</span>
+                                <div className="text-xl font-bold text-green-700">{result.surface}m²</div>
+                              </div>
+                            </div>
+                            
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead colSpan={2} className="text-center">Dati Demografici</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                <TableRow>
+                                  <TableCell className="font-medium">Popolazione</TableCell>
+                                  <TableCell>{result.demographics.population.toLocaleString()}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell className="font-medium">Età Media</TableCell>
+                                  <TableCell>{result.demographics.averageAge} anni</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell className="font-medium">Reddito Medio</TableCell>
+                                  <TableCell>{result.demographics.income}</TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                            
+                            <div>
+                              <h4 className="text-lg font-medium mb-2">Caratteristiche</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {result.features.map((feature: string, index: number) => (
+                                  <Badge key={index} variant="outline">
+                                    {feature}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <Button className="w-full">
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Contatta per Maggiori Informazioni
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                     <Button size="sm" variant="outline">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Contatta
