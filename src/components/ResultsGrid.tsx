@@ -23,8 +23,10 @@ interface ResultsGridProps {
   onNext?: () => void;
 }
 
-// Mock data generator
+// Mock data generator - now with subtype filtering
 const generateMockResults = (searchData: any) => {
+  console.log("Generating results for:", searchData.businessType, searchData.businessSubtype);
+  
   const baseResults = [
     {
       id: 1,
@@ -34,6 +36,7 @@ const generateMockResults = (searchData: any) => {
       surface: 85,
       score: 92,
       type: "Locale commerciale",
+      subtype: "Ristorante",
       description: "Ottima posizione nel centro storico, alta affluenza pedonale",
       demographics: {
         population: 45000,
@@ -53,6 +56,7 @@ const generateMockResults = (searchData: any) => {
       surface: 120,
       score: 88,
       type: "Open space",
+      subtype: "Bar",
       description: "Moderno locale con grandi vetrate, zona business",
       demographics: {
         population: 38000,
@@ -72,6 +76,7 @@ const generateMockResults = (searchData: any) => {
       surface: 65,
       score: 85,
       type: "Locale storico",
+      subtype: "Pizzeria",
       description: "Zona movida, ideale per ristorazione e retail giovane",
       demographics: {
         population: 52000,
@@ -91,6 +96,7 @@ const generateMockResults = (searchData: any) => {
       surface: 150,
       score: 94,
       type: "Locale premium",
+      subtype: "Ristorante",
       description: "Distretto finanziario, clientela business di alto livello",
       demographics: {
         population: 35000,
@@ -101,10 +107,104 @@ const generateMockResults = (searchData: any) => {
       competition: 2,
       footTraffic: 88,
       accessibility: 98
+    },
+    {
+      id: 5,
+      title: "Spazio Commerciale Via Montenapoleone",
+      address: "Via Montenapoleone 8, Milano",
+      price: 7500,
+      surface: 90,
+      score: 96,
+      type: "Luxury retail",
+      subtype: "Abbigliamento e Accessori",
+      description: "Prestigiosa via dello shopping di lusso, clientela internazionale",
+      demographics: {
+        population: 25000,
+        averageAge: 45,
+        income: "Molto alto"
+      },
+      features: ["Vetrina prestigiosa", "Contesto esclusivo", "Alta visibilità"],
+      competition: 4,
+      footTraffic: 75,
+      accessibility: 85
+    },
+    {
+      id: 6,
+      title: "Studio Medico Città Studi",
+      address: "Viale Romagna 22, Milano",
+      price: 2100,
+      surface: 75,
+      score: 89,
+      type: "Studio professionale",
+      subtype: "Studio Dentistico",
+      description: "Zona universitaria e residenziale, ottimo per studi medici",
+      demographics: {
+        population: 42000,
+        averageAge: 32,
+        income: "Medio-alto"
+      },
+      features: ["Ampia sala d'attesa", "Reception", "3 stanze separate", "Accessibile"],
+      competition: 2,
+      footTraffic: 65,
+      accessibility: 90
+    },
+    {
+      id: 7,
+      title: "Capannone Commerciale Zona Sud",
+      address: "Via dell'Industria 15, Milano",
+      price: 3800,
+      surface: 350,
+      score: 82,
+      type: "Capannone",
+      subtype: "Officina",
+      description: "Area industriale ben collegata, ampi spazi di manovra",
+      demographics: {
+        population: 18000,
+        averageAge: 42,
+        income: "Medio"
+      },
+      features: ["Ampio cortile", "Zona carico/scarico", "Uffici interni", "Parcheggi"],
+      competition: 1,
+      footTraffic: 45,
+      accessibility: 80
+    },
+    {
+      id: 8,
+      title: "Negozio Centro Commerciale",
+      address: "Centro Commerciale Milano Est, Milano",
+      price: 3200,
+      surface: 65,
+      score: 87,
+      type: "Corner commerciale",
+      subtype: "Elettronica",
+      description: "Elevato passaggio nel principale centro commerciale della zona",
+      demographics: {
+        population: 120000,
+        averageAge: 35,
+        income: "Medio"
+      },
+      features: ["Grande visibilità", "Spazi personalizzabili", "Area food court vicina"],
+      competition: 6,
+      footTraffic: 95,
+      accessibility: 100
     }
   ];
 
-  return baseResults.map(result => ({
+  // Filter by subtype if specified
+  let filteredResults = baseResults;
+  if (searchData.businessSubtype) {
+    filteredResults = baseResults.filter(result => 
+      result.subtype === searchData.businessSubtype
+    );
+  }
+
+  // If no results found or less than 2, return first 3 items to avoid empty results
+  if (filteredResults.length < 2) {
+    filteredResults = baseResults.slice(0, 3);
+  }
+
+  // Apply budget and surface filters
+  return filteredResults.map(result => ({
     ...result,
     price: Math.max(searchData.budget.min, Math.min(searchData.budget.max, result.price)),
     surface: Math.max(searchData.surface.min, Math.min(searchData.surface.max, result.surface))
@@ -119,11 +219,13 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
   useEffect(() => {
     // Simulate API call
     setLoading(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const mockResults = generateMockResults(searchData);
       setResults(mockResults);
       setLoading(false);
     }, 2000);
+
+    return () => clearTimeout(timer);
   }, [searchData]);
 
   const toggleFavorite = (id: number) => {
@@ -182,12 +284,12 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
 
   return (
     <div className="space-y-8">
-      {/* Results Summary */}
+      {/* Results Summary - Now including business subtype */}
       <div className="text-center">
         <div className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-md rounded-full px-6 py-4 shadow-lg">
           <TrendingUp className="h-5 w-5 text-green-600" />
           <span className="text-lg font-medium text-slate-700">
-            Trovate {results.length} opportunità perfette per te
+            Trovate {results.length} opportunità per {searchData.businessSubtype || "la tua attività"}
           </span>
         </div>
       </div>
@@ -213,6 +315,8 @@ const ResultsGrid = ({ searchData }: ResultsGridProps) => {
                         <MapPin className="h-4 w-4 mr-1" />
                         <span className="text-sm">{result.address}</span>
                       </div>
+                      {/* Display the subtype */}
+                      <Badge className="mt-2">{result.subtype}</Badge>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge className={`${getScoreBadgeColor(result.score)}`}>

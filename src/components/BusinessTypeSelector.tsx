@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,10 @@ import {
   Car,
   Building,
   Palette,
-  Utensils
+  Utensils,
+  CheckCircle2
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BusinessTypeSelectorProps {
   searchData: any;
@@ -29,7 +31,17 @@ const businessTypes = [
     description: 'Negozi di abbigliamento, elettronica, accessori',
     icon: ShoppingBag,
     color: 'bg-blue-500',
-    examples: ['Abbigliamento', 'Ottica', 'Edicola', 'Elettronica']
+    examples: ['Abbigliamento', 'Ottica', 'Edicola', 'Elettronica'],
+    subcategories: [
+      'Abbigliamento e Accessori',
+      'Elettronica',
+      'Articoli per la Casa',
+      'Librerie e Cancelleria',
+      'Ottica',
+      'Gioiellerie',
+      'Edicole',
+      'Negozi di Telefonia'
+    ]
   },
   {
     id: 'food',
@@ -37,7 +49,17 @@ const businessTypes = [
     description: 'Ristoranti, bar, pizzerie, catering',
     icon: Coffee,
     color: 'bg-orange-500',
-    examples: ['Bar', 'Ristorante', 'Pizzeria', 'Gelateria']
+    examples: ['Bar', 'Ristorante', 'Pizzeria', 'Gelateria'],
+    subcategories: [
+      'Ristorante',
+      'Pizzeria',
+      'Bar',
+      'Pub',
+      'Gelateria',
+      'Pasticceria',
+      'Fast Food',
+      'Gastronomia'
+    ]
   },
   {
     id: 'services',
@@ -45,7 +67,17 @@ const businessTypes = [
     description: 'Parrucchieri, centri estetici, wellness',
     icon: Scissors,
     color: 'bg-pink-500',
-    examples: ['Parrucchiere', 'Centro Estetico', 'Palestra', 'SPA']
+    examples: ['Parrucchiere', 'Centro Estetico', 'Palestra', 'SPA'],
+    subcategories: [
+      'Parrucchiere',
+      'Centro Estetico',
+      'Palestra',
+      'Centro Massaggi',
+      'SPA',
+      'Centro Benessere',
+      'Salone Unghie',
+      'Studio Tatuaggi'
+    ]
   },
   {
     id: 'professional',
@@ -53,7 +85,17 @@ const businessTypes = [
     description: 'Uffici, coworking, consulenze',
     icon: Building,
     color: 'bg-purple-500',
-    examples: ['Coworking', 'Studio Legale', 'Agenzia', 'Consultoria']
+    examples: ['Coworking', 'Studio Legale', 'Agenzia', 'Consultoria'],
+    subcategories: [
+      'Studio Legale',
+      'Commercialista',
+      'Agenzia Immobiliare',
+      'Consulenza Finanziaria',
+      'Web Agency',
+      'Spazio Coworking',
+      'Studio di Architettura',
+      'Agenzia di Marketing'
+    ]
   },
   {
     id: 'automotive',
@@ -61,7 +103,17 @@ const businessTypes = [
     description: 'Officine, autolavaggi, concessionarie',
     icon: Car,
     color: 'bg-red-500',
-    examples: ['Officina', 'Autolavaggio', 'Parcheggio', 'Autonoleggio']
+    examples: ['Officina', 'Autolavaggio', 'Parcheggio', 'Autonoleggio'],
+    subcategories: [
+      'Officina',
+      'Autolavaggio',
+      'Concessionaria',
+      'Autonoleggio',
+      'Ricambi Auto',
+      'Gommista',
+      'Carrozzeria',
+      'Parcheggio'
+    ]
   },
   {
     id: 'health',
@@ -69,7 +121,17 @@ const businessTypes = [
     description: 'Farmacie, cliniche, centri medici',
     icon: Stethoscope,
     color: 'bg-green-500',
-    examples: ['Farmacia', 'Poliambulatorio', 'Fisioterapia', 'Dentista']
+    examples: ['Farmacia', 'Poliambulatorio', 'Fisioterapia', 'Dentista'],
+    subcategories: [
+      'Farmacia',
+      'Studio Dentistico',
+      'Poliambulatorio',
+      'Centro Fisioterapia',
+      'Studio Veterinario',
+      'Centro Nutrizionale',
+      'Ottico',
+      'Studio Psicologico'
+    ]
   },
   {
     id: 'education',
@@ -77,7 +139,17 @@ const businessTypes = [
     description: 'Scuole, corsi, centri formativi',
     icon: GraduationCap,
     color: 'bg-indigo-500',
-    examples: ['Scuola Lingue', 'Centro Formazione', 'Tutoring', 'Asilo']
+    examples: ['Scuola Lingue', 'Centro Formazione', 'Tutoring', 'Asilo'],
+    subcategories: [
+      'Scuola di Lingue',
+      'Centro di Formazione',
+      'Asilo Nido',
+      'Doposcuola',
+      'Scuola di Musica',
+      'Corsi di Informatica',
+      'Centro Tutoring',
+      'Scuola di Arte'
+    ]
   },
   {
     id: 'creative',
@@ -85,26 +157,73 @@ const businessTypes = [
     description: 'Studi artistici, gallerie, laboratori',
     icon: Palette,
     color: 'bg-teal-500',
-    examples: ['Studio Fotografico', 'Galleria', 'Laboratorio', 'Atelier']
+    examples: ['Studio Fotografico', 'Galleria', 'Laboratorio', 'Atelier'],
+    subcategories: [
+      'Studio Fotografico',
+      'Galleria d\'Arte',
+      'Atelier di Moda',
+      'Laboratorio Artigianale',
+      'Studio di Registrazione',
+      'Design Studio',
+      'Spazio Espositivo',
+      'Laboratorio Creativo'
+    ]
   }
 ];
 
 const BusinessTypeSelector = ({ searchData, updateSearchData, onNext }: BusinessTypeSelectorProps) => {
   const handleSelectType = (typeId: string) => {
-    updateSearchData({ businessType: typeId });
+    updateSearchData({ 
+      businessType: typeId,
+      businessSubtype: '' // Reset subtype when changing main type
+    });
   };
 
+  const handleSelectSubtype = (subtype: string) => {
+    updateSearchData({ businessSubtype: subtype });
+  };
+
+  // Find the selected business type object
+  const selectedType = businessTypes.find(t => t.id === searchData.businessType);
+  
   return (
     <div className="space-y-8">
-      {/* Selected Type Display */}
+      {/* Selected Type and Subtype Display */}
       {searchData.businessType && (
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-md rounded-full px-6 py-3 shadow-lg">
             <span className="text-sm text-slate-600">Selezionato:</span>
             <Badge variant="secondary" className="text-sm">
-              {businessTypes.find(t => t.id === searchData.businessType)?.title}
+              {selectedType?.title}
             </Badge>
+            {searchData.businessSubtype && (
+              <Badge variant="secondary" className="text-sm">
+                {searchData.businessSubtype}
+              </Badge>
+            )}
           </div>
+          
+          {/* Subcategory selector appears after selecting main category */}
+          {selectedType && (
+            <div className="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-lg p-4 shadow-md">
+              <h3 className="text-md font-medium text-slate-700 mb-3">Seleziona una sottocategoria specifica:</h3>
+              <Select
+                value={searchData.businessSubtype}
+                onValueChange={handleSelectSubtype}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleziona sottocategoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedType.subcategories.map((subtype) => (
+                    <SelectItem key={subtype} value={subtype}>
+                      {subtype}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       )}
 
@@ -149,8 +268,8 @@ const BusinessTypeSelector = ({ searchData, updateSearchData, onNext }: Business
         })}
       </div>
 
-      {/* Next Button */}
-      {searchData.businessType && (
+      {/* Next Button - Now requires both type and subtype selection */}
+      {searchData.businessType && searchData.businessSubtype && (
         <div className="text-center">
           <Button 
             onClick={onNext}

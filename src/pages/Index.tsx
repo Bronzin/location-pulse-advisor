@@ -8,17 +8,20 @@ import LocationMap from "@/components/LocationMap";
 import ResultsGrid from "@/components/ResultsGrid";
 import Hero from "@/components/Hero";
 import { Building2, MapPin, TrendingUp, Users } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [searchData, setSearchData] = useState({
     businessType: '',
+    businessSubtype: '',
     budget: { min: 0, max: 5000 },
     surface: { min: 0, max: 500 },
     population: 10000,
     location: null,
     competitors: true
   });
+  const [searchInitiated, setSearchInitiated] = useState(false);
 
   const steps = [
     { title: "Tipo di Business", component: BusinessTypeSelector },
@@ -30,6 +33,15 @@ const Index = () => {
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+    } 
+    // When moving from step 3 (map) to step 4 (results)
+    if (currentStep === 2) {
+      setSearchInitiated(true);
+      toast({
+        title: "Ricerca avviata!",
+        description: `Ricerca per ${searchData.businessSubtype} con budget fino a €${searchData.budget.max}`,
+        duration: 3000
+      });
     }
   };
 
@@ -63,7 +75,7 @@ const Index = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-slate-600">
-                Step {currentStep} of {steps.length - 1}
+                Step {currentStep} di {steps.length - 1}
               </div>
               <div className="w-32 h-2 bg-slate-200 rounded-full">
                 <div 
@@ -112,13 +124,24 @@ const Index = () => {
               >
                 Indietro
               </Button>
-              <Button 
-                onClick={handleNext}
-                disabled={currentStep === steps.length}
-                className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
-              >
-                {currentStep === steps.length - 1 ? "Completa" : "Avanti"}
-              </Button>
+              {currentStep === 3 && (
+                <Button 
+                  onClick={handleNext}
+                  className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                >
+                  Cerca Opportunità
+                </Button>
+              )}
+              {currentStep < 3 && (
+                <Button 
+                  onClick={handleNext}
+                  disabled={currentStep === steps.length || 
+                          (currentStep === 1 && (!searchData.businessType || !searchData.businessSubtype))}
+                  className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                >
+                  {currentStep === steps.length - 1 ? "Completa" : "Avanti"}
+                </Button>
+              )}
             </div>
           )}
         </div>
