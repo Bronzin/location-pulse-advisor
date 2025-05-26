@@ -35,15 +35,6 @@ const Index = () => {
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
-    } 
-    // When moving from step 3 (map) to step 4 (results)
-    if (currentStep === 2) {
-      setSearchInitiated(true);
-      toast({
-        title: "Ricerca avviata!",
-        description: `Ricerca per ${searchData.businessSubtype} con budget fino a €${searchData.budget.max}`,
-        duration: 3000
-      });
     }
   };
 
@@ -63,7 +54,7 @@ const Index = () => {
     setCurrentStep(4); // Move directly to the results step
     toast({
       title: "Ricerca avviata!",
-      description: `Ricerca per ${searchData.businessSubtype} con budget fino a €${searchData.budget.max}`,
+      description: `Ricerca per ${searchData.businessSubtype} in ${searchData.location?.value || 'Italia'} con budget fino a €${searchData.budget.max}`,
       duration: 3000
     });
   };
@@ -146,7 +137,7 @@ const Index = () => {
               >
                 Indietro
               </Button>
-              {currentStep === 3 && (
+              {currentStep === 3 && searchData.location && (
                 <Button 
                   onClick={handleSearchOpportunities}
                   className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"

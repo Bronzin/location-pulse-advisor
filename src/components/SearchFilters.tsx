@@ -4,16 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Euro, 
   Maximize2, 
   Users, 
-  Building2,
-  MapPin,
-  TrendingUp
+  Building2
 } from "lucide-react";
 
 interface SearchFiltersProps {
@@ -198,17 +194,6 @@ const SearchFilters = ({ searchData, updateSearchData, onNext }: SearchFiltersPr
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Continue Button */}
-      <div className="text-center">
-        <Button 
-          onClick={onNext}
-          size="lg"
-          className="px-8 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
-        >
-          Seleziona Area Geografica
-        </Button>
       </div>
     </div>
   );
